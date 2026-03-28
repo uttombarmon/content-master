@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { SEOAnalyzer } from "@/components/SEOAnalyzer";
+import { ShareButtons } from "@/components/ShareButtons";
 import { PenTool, CheckCircle, Globe, Share2, Loader2, Zap } from "lucide-react";
 import { generateAction } from "@/app/actions/generate";
 
@@ -143,6 +144,13 @@ export default function GeneratePage() {
                     </div>
                   </div>
                 )}
+
+                <div className="pt-6 border-t border-white/10">
+                  <ShareButtons 
+                    content={content} 
+                    title={generatedData.title} 
+                  />
+                </div>
               </div>
             </div>
           )}

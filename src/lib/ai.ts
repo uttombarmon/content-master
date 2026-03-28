@@ -21,6 +21,7 @@ export async function generateSocialPost({ platform, topic, keywords }: Generati
     - Engagement-driven lead-in.
     - SEO-friendly title and body.
     - 5-10 relevant hashtags.
+    - **CRITICAL: Do not use markdown like asterisks (**) for bolding or lists. Use plain text only.**
     
     Return the response as a JSON object with:
     {
@@ -41,7 +42,14 @@ export async function generateSocialPost({ platform, topic, keywords }: Generati
   // Clean up JSON if necessary (sometimes AI wraps in backticks)
   const jsonMatch = text.match(/\{[\s\S]*\}/);
   if (jsonMatch) {
-    return JSON.parse(jsonMatch[0]);
+    const data = JSON.parse(jsonMatch[0]);
+    
+    // Sanitize text to remove asterisks if any remain
+    const sanitize = (str: string) => str.replace(/\*/g, "");
+    if (data.title) data.title = sanitize(data.title);
+    if (data.body) data.body = sanitize(data.body);
+    
+    return data;
   }
   
   throw new Error("Failed to parse AI response");
