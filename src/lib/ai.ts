@@ -26,6 +26,9 @@ export async function generateSocialPost({ platform, topic, keywords }: Generati
     {
       "title": "string",
       "body": "string",
+      "image_prompt": "string",
+      "keywords": ["string"],
+      "score": "number",
       "hashtags": ["string"],
       "seo_explanation": "string"
     }

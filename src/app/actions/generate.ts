@@ -24,8 +24,10 @@ export async function generateAction(formData: FormData) {
     platform,
     title: result.title,
     body: result.body,
+    keywords: result.keywords,
     hashtags: result.hashtags,
     status: "draft",
+    seoScore: result.score,
     metadata: {
       ogTitle: result.title,
       ogDescription: result.body.substring(0, 160),
