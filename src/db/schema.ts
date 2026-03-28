@@ -16,6 +16,9 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("emailVerified").notNull(),
   image: text("image"),
+  credits: integer("credits").default(10).notNull(),
+  plan: varchar("plan", { length: 20 }).default("free").notNull(),
+  lastCreditReset: timestamp("last_credit_reset").defaultNow().notNull(),
   createdAt: timestamp("createdAt").notNull(),
   updatedAt: timestamp("updatedAt").notNull(),
 });
