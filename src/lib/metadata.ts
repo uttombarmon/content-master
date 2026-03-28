@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 
 export const siteConfig = {
-  name: "SEO Social Master",
+  name: "Content Master",
   description: "Generate SEO-optimized content for social media platforms with real-time feedback.",
-  url: "https://seo-social-master.vercel.app",
-  ogImage: "https://seo-social-master.vercel.app/og.png",
+  url: "https://content-master.vercel.app",
+  ogImage: "https://content-master.vercel.app/og.png",
   links: {
     github: "https://github.com/content-master",
   },
@@ -41,7 +41,7 @@ export function constructMetadata({
       title,
       description,
       images: [image],
-      creator: "@seosocialmaster",
+      creator: "@contentmaster",
     },
     icons: {
       icon: "/favicon.ico",
