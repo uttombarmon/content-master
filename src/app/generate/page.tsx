@@ -2,24 +2,25 @@
 
 import { useState, useTransition } from "react";
 import { SEOAnalyzer } from "@/components/SEOAnalyzer";
-import { PenTool, CheckCircle, Globe, Share2, Loader2 } from "lucide-react";
+import { PenTool, CheckCircle, Globe, Share2, Loader2, Zap } from "lucide-react";
 import { generateAction } from "@/app/actions/generate";
 
 export default function GeneratePage() {
   const [content, setContent] = useState("");
   const [platform, setPlatform] = useState("facebook");
   const [isPending, startTransition] = useTransition();
+  const [generatedData, setGeneratedData] = useState<any>(null);
 
   const handleGenerate = () => {
     const formData = new FormData();
     formData.append("platform", platform);
-    formData.append("topic", content); // Using content as topic for now
+    formData.append("topic", content);
 
     startTransition(async () => {
       try {
         const result = await generateAction(formData);
         setContent(result.body);
-        // Additional state updates for SEOAnalyzer would go here
+        setGeneratedData(result);
       } catch (e) {
         console.error("failed", e);
       }
@@ -28,7 +29,6 @@ export default function GeneratePage() {
 
   return (
     <div className="container mx-auto px-4 py-12">
-      {/* ... prev header ... */}
       <div className="mb-12 text-center">
         <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl gradient-text">
           Optimize Your Reach
@@ -40,7 +40,7 @@ export default function GeneratePage() {
 
       <div className="grid gap-8 lg:grid-cols-12">
         {/* Editor Section */}
-        <div className="lg:col-span-12 xl:col-span-7">
+        <div className="lg:col-span-12 xl:col-span-7 space-y-8">
           <div className="glass space-y-6 p-8 border-white/10 bg-slate-900/50">
             <div className="flex flex-wrap items-center gap-4">
               {["facebook", "instagram", "linkedin", "youtube"].map((p) => (
@@ -97,6 +97,56 @@ export default function GeneratePage() {
             </div>
           </div>
 
+          {generatedData && (
+            <div className="glass p-8 border-white/10 bg-slate-900/50 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-indigo-300">
+                <Zap className="h-5 w-5" />
+                Generated Content Details
+              </h3>
+              
+              <div className="space-y-6">
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">Optimized Title</label>
+                  <div className="text-lg font-semibold text-white bg-white/5 p-4 rounded-lg border border-white/5">
+                    {generatedData.title || "No title generated"}
+                  </div>
+                </div>
+
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">Target Keywords</label>
+                    <div className="flex flex-wrap gap-2">
+                      {generatedData.keywords?.map((kw: string, i: number) => (
+                        <span key={i} className="px-3 py-1 bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 rounded-full text-sm">
+                          {kw}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">Hashtags</label>
+                    <div className="flex flex-wrap gap-2">
+                      {generatedData.hashtags?.map((ht: string, i: number) => (
+                        <span key={i} className="px-3 py-1 bg-rose-500/10 text-rose-300 border border-rose-500/20 rounded-full text-sm font-medium">
+                          #{ht.replace(/^#/, "")}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {generatedData.metadata?.seoExplanation && (
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">AI SEO Strategy</label>
+                    <div className="bg-slate-950/50 p-4 rounded-lg border border-white/5 text-sm text-slate-300 leading-relaxed italic">
+                      {generatedData.metadata.seoExplanation}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
              {[
                { icon: Share2, label: "Publish Fast" },
@@ -113,7 +163,11 @@ export default function GeneratePage() {
 
         {/* Audit Sidebar */}
         <div className="lg:col-span-12 xl:col-span-5 space-y-6">
-          <SEOAnalyzer content={content} />
+          <SEOAnalyzer 
+            content={content} 
+            aiScore={generatedData?.seoScore} 
+            aiFeedback={generatedData?.metadata?.seoExplanation}
+          />
           
           <div className="glass p-6 border-white/10 bg-slate-900/50">
              <h4 className="font-bold mb-4 flex items-center gap-2">

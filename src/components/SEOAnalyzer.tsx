@@ -14,15 +14,31 @@ interface SEOIssue {
   message: string;
 }
 
-export function SEOAnalyzer({ content }: { content: string }) {
+interface SEOAnalyzerProps {
+  content: string;
+  aiScore?: number;
+  aiFeedback?: string;
+}
+
+export function SEOAnalyzer({ content, aiScore, aiFeedback }: SEOAnalyzerProps) {
   const [score, setScore] = useState(0);
   const [issues, setIssues] = useState<SEOIssue[]>([]);
 
   useEffect(() => {
-    analyzeContent(content);
-  }, [content]);
+    // If we have an AI score, we use it as the base
+    if (aiScore !== undefined) {
+      setScore(aiScore);
+    } else {
+      analyzeContent(content);
+    }
+  }, [content, aiScore]);
 
   const analyzeContent = (text: string) => {
+    if (!text) {
+      setScore(0);
+      setIssues([]);
+      return;
+    }
     const newIssues: SEOIssue[] = [];
     let currentScore = 0;
 
@@ -77,38 +93,51 @@ export function SEOAnalyzer({ content }: { content: string }) {
       </div>
 
       <div className="p-6 space-y-4">
-        {issues.map((issue, i) => (
-          <div
-            key={i}
-            className={cn(
-              "flex items-start gap-3 rounded-lg border p-4 text-sm transition-all",
-              issue.type === "success" && "border-green-500/20 bg-green-500/5 text-green-300",
-              issue.type === "warning" && "border-yellow-500/20 bg-yellow-500/5 text-yellow-300",
-              issue.type === "error" && "border-rose-500/20 bg-rose-500/5 text-rose-300"
-            )}
-          >
-            {issue.type === "success" ? (
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
-            ) : issue.type === "warning" ? (
-              <Info className="mt-0.5 h-4 w-4 shrink-0" />
-            ) : (
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-            )}
-            <p>{issue.message}</p>
+        {issues.length > 0 ? (
+          issues.map((issue, i) => (
+            <div
+              key={i}
+              className={cn(
+                "flex items-start gap-3 rounded-lg border p-4 text-sm transition-all",
+                issue.type === "success" && "border-green-500/20 bg-green-500/5 text-green-300",
+                issue.type === "warning" && "border-yellow-500/20 bg-yellow-500/5 text-yellow-300",
+                issue.type === "error" && "border-rose-500/20 bg-rose-500/5 text-rose-300"
+              )}
+            >
+              {issue.type === "success" ? (
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+              ) : issue.type === "warning" ? (
+                <Info className="mt-0.5 h-4 w-4 shrink-0" />
+              ) : (
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+              )}
+              <p>{issue.message}</p>
+            </div>
+          ))
+        ) : content ? (
+            <div className="flex items-center gap-3 rounded-lg border border-indigo-500/20 bg-indigo-500/5 p-4 text-sm text-indigo-300">
+              <Zap className="h-4 w-4 shrink-0" />
+              <p>AI has analyzed your content for optimal SEO performance.</p>
+            </div>
+        ) : (
+          <div className="text-center py-4 text-slate-500 italic text-sm">
+            Enter content to begin audit...
           </div>
-        ))}
+        )}
 
-        <div className="mt-6 rounded-xl bg-indigo-500/10 p-4 border border-indigo-500/20">
-          <h4 className="flex items-center gap-2 font-bold text-indigo-300 mb-2">
-            <Zap className="h-4 w-4" />
-            AI Suggestion
-          </h4>
-          <p className="text-sm text-slate-400 leading-relaxed">
-            {score < 100 
-              ? "Try incorporating more semantically related terms like 'Audience Engagement' or 'Algorithm Optimization' to improve reach."
-              : "Excellent! Your content is highly optimized for search engine crawlability and user engagement."}
-          </p>
-        </div>
+        {(aiFeedback || content) && (
+          <div className="mt-6 rounded-xl bg-indigo-500/10 p-4 border border-indigo-500/20">
+            <h4 className="flex items-center gap-2 font-bold text-indigo-300 mb-2">
+              <Zap className="h-4 w-4" />
+              AI Suggestion
+            </h4>
+            <p className="text-sm text-slate-400 leading-relaxed whitespace-pre-line">
+              {aiFeedback || (score < 100 
+                ? "Try incorporating more semantically related terms like 'Audience Engagement' or 'Algorithm Optimization' to improve reach."
+                : "Excellent! Your content is highly optimized for search engine crawlability and user engagement.")}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

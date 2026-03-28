@@ -76,6 +76,8 @@ export const socialContent = pgTable("social_content", {
     ogDescription?: string;
     ogImage?: string;
     jsonLd?: Record<string, any>;
+    seoExplanation?: string;
+    imagePrompt?: string;
   }>(),
   status: varchar("status", { length: 20 }).default("draft"), // 'draft' | 'final'
   seoScore: integer("seo_score").default(0),

@@ -31,6 +31,8 @@ export async function generateAction(formData: FormData) {
     metadata: {
       ogTitle: result.title,
       ogDescription: result.body.substring(0, 160),
+      seoExplanation: result.seo_explanation,
+      imagePrompt: result.image_prompt,
     }
   }).returning();
 

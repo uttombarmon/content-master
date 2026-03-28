@@ -24,13 +24,13 @@ export async function generateSocialPost({ platform, topic, keywords }: Generati
     
     Return the response as a JSON object with:
     {
-      "title": "string",
-      "body": "string",
-      "image_prompt": "string",
-      "keywords": ["string"],
-      "score": "number",
-      "hashtags": ["string"],
-      "seo_explanation": "string"
+      "title": "string (Compelling, SEO-optimized title)",
+      "body": "string (The full post content)",
+      "image_prompt": "string (A descriptive prompt for an AI image generator)",
+      "keywords": ["string"] (List of 3-5 primary keywords),
+      "score": number (SEO score from 0-100),
+      "hashtags": ["string"] (Relevant hashtags),
+      "seo_explanation": "string (Structured as 'Analysis: [brief insight]. Recommendations: [actionable step].')"
     }
   `;
 
