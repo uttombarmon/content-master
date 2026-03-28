@@ -6,18 +6,16 @@ import { socialContent, user } from "@/db/schema";
 import { desc, eq } from "drizzle-orm";
 import Link from "next/link";
 import { CreditIndicator } from "@/components/CreditIndicator";
+import { DashboardContent } from "@/components/DashboardContent";
 import { 
   BarChart3, 
-  Clock, 
-  ExternalLink, 
-  Trash2, 
-  Plus, 
   Layers,
   Search,
   Zap,
-  CheckCircle2,
+  Sparkles,
   TrendingUp,
-  Sparkles
+  CheckCircle2,
+  Plus
 } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -111,85 +109,8 @@ export default async function DashboardPage() {
               </div>
             </div>
 
-            {/* Content List */}
-            <div className="glass rounded-2xl border-white/5 bg-slate-900/20 overflow-hidden shadow-2xl">
-              <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/2">
-                <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-indigo-400" />
-                  Recent Generations
-                </h2>
-              </div>
-
-              <div className="overflow-x-auto">
-                {posts.length === 0 ? (
-                  <div className="p-20 text-center">
-                    <div className="mx-auto h-20 w-20 rounded-full bg-slate-900 flex items-center justify-center mb-6">
-                      <Plus className="h-10 w-10 text-slate-600" />
-                    </div>
-                    <h3 className="text-xl font-bold text-white mb-2">No posts yet</h3>
-                    <p className="text-slate-400 mb-6">Generate your first SEO-optimized social post to see it here.</p>
-                    <Link
-                      href="/generate"
-                      className="inline-flex items-center gap-2 rounded-xl bg-white/5 px-6 py-3 text-sm font-bold text-white border border-white/10 hover:bg-white/10 transition-all font-mono uppercase tracking-widest"
-                    >
-                      Initialize Generation
-                    </Link>
-                  </div>
-                ) : (
-                  <table className="w-full text-left border-collapse">
-                    <thead className="text-[10px] font-black uppercase tracking-widest text-slate-500 bg-white/2">
-                      <tr>
-                        <th className="px-6 py-4">Content Topic & Platform</th>
-                        <th className="px-6 py-4 text-center">SEO Score</th>
-                        <th className="px-6 py-4">Date</th>
-                        <th className="px-6 py-4 text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
-                      {posts.map((post) => (
-                        <tr key={post.id} className="group hover:bg-white/2 transition-colors">
-                          <td className="px-6 py-5">
-                            <div className="flex items-center gap-4">
-                              <div className="h-10 w-10 shrink-0 rounded-lg bg-indigo-500/10 flex items-center justify-center text-[10px] font-black text-indigo-400 border border-indigo-500/10 uppercase tracking-tighter">
-                                {post.platform.substring(0, 3)}
-                              </div>
-                              <div className="min-w-0">
-                                <p className="text-sm font-bold text-white truncate max-w-[200px]">{post.title || "Untitled Generation"}</p>
-                                <p className="text-xs text-slate-500 uppercase tracking-wider">{post.platform}</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-5">
-                            <div className="flex flex-col items-center gap-1.5">
-                              <span className="text-sm font-black text-emerald-400">{post.seoScore}%</span>
-                              <div className="h-1 w-12 bg-slate-800 rounded-full overflow-hidden">
-                                <div 
-                                  className="h-full bg-emerald-500" 
-                                  style={{ width: `${post.seoScore}%` }} 
-                                />
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-5 text-sm text-slate-500 font-medium">
-                            {new Date(post.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                          </td>
-                          <td className="px-6 py-5 text-right">
-                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <button className="h-9 w-9 rounded-lg bg-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all border border-white/5">
-                                <ExternalLink className="h-4 w-4" />
-                              </button>
-                              <button className="h-9 w-9 rounded-lg bg-white/5 flex items-center justify-center text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all border border-white/5">
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            </div>
+            {/* Content List & Modals (Client Side) */}
+            <DashboardContent initialPosts={posts} />
           </div>
 
           {/* Sidebar Plans & Credits */}
