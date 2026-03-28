@@ -19,6 +19,10 @@ export const user = pgTable("user", {
   credits: integer("credits").default(10).notNull(),
   plan: varchar("plan", { length: 20 }).default("free").notNull(),
   lastCreditReset: timestamp("last_credit_reset").defaultNow().notNull(),
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
+  stripePriceId: text("stripe_price_id"),
+  subscriptionStatus: text("subscription_status"),
   createdAt: timestamp("createdAt").notNull(),
   updatedAt: timestamp("updatedAt").notNull(),
 });

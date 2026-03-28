@@ -7,15 +7,15 @@ import { desc, eq } from "drizzle-orm";
 import Link from "next/link";
 import { CreditIndicator } from "@/components/CreditIndicator";
 import { DashboardContent } from "@/components/DashboardContent";
-import { 
-  BarChart3, 
+import {
+  BarChart3,
   Layers,
   Search,
   Zap,
   Sparkles,
   TrendingUp,
   CheckCircle2,
-  Plus
+  Plus,
 } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -72,16 +72,20 @@ export default async function DashboardPage() {
 
         <div className="grid gap-8 lg:grid-cols-12 mb-12">
           {/* Main Stats */}
-          <div className="lg:col-span-8 space-y-8">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="lg:col-span-12 space-y-8">
+            {/* <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div className="glass p-6 rounded-2xl border-white/5 bg-slate-900/40 hover:bg-slate-900/60 transition-colors group">
                 <div className="flex items-center gap-4">
                   <div className="h-12 w-12 rounded-xl bg-indigo-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Layers className="h-6 w-6 text-indigo-400" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Total Posts</p>
-                    <p className="text-3xl font-black text-white">{posts.length}</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                      Total Posts
+                    </p>
+                    <p className="text-3xl font-black text-white">
+                      {posts.length}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -91,7 +95,9 @@ export default async function DashboardPage() {
                     <Search className="h-6 w-6 text-rose-400" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">SEO Score Avg</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                      SEO Score Avg
+                    </p>
                     <p className="text-3xl font-black text-white">92%</p>
                   </div>
                 </div>
@@ -102,19 +108,30 @@ export default async function DashboardPage() {
                     <BarChart3 className="h-6 w-6 text-emerald-400" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Reach Trend</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                      Reach Trend
+                    </p>
                     <p className="text-3xl font-black text-white">+14%</p>
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Content List & Modals (Client Side) */}
-            <DashboardContent initialPosts={posts} />
+            <DashboardContent
+              initialPosts={posts}
+              userData={{
+                id: userData.id,
+                name: userData.name,
+                email: userData.email,
+                credits: userData.credits,
+                plan: userData.plan,
+              }}
+            />
           </div>
 
           {/* Sidebar Plans & Credits */}
-          <div className="lg:col-span-4 space-y-6">
+          {/* <div className="lg:col-span-4 space-y-6">
             <div className="glass p-8 rounded-2xl border-indigo-500/20 bg-linear-to-br from-indigo-500/8 to-rose-500/8 shadow-2xl relative overflow-hidden">
               <Sparkles className="absolute -top-4 -right-4 h-24 w-24 text-indigo-500/5 rotate-12" />
               <CreditIndicator credits={userData.credits} plan={userData.plan} />
@@ -165,7 +182,7 @@ export default async function DashboardPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
