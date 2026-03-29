@@ -19,7 +19,7 @@ import {
 import Link from "next/link";
 import { Modal } from "@/components/Modal";
 import { deletePostAction, updatePostAction } from "@/app/actions/dashboard";
-import { createCheckoutSession, createCustomerPortalSession } from "@/app/actions/stripe";
+import { createCheckoutSession } from "@/app/actions/stripe";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CreditIndicator } from "@/components/CreditIndicator";
 
@@ -63,7 +63,10 @@ export function DashboardContent({
   const [isPending, setIsPending] = useState(false);
   const [isUpgrading, setIsUpgrading] = useState(false);
   const [isManaging, setIsManaging] = useState(false);
-  const [toastMessage, setToastMessage] = useState<{title: string, type: 'success' | 'error' | 'info'} | null>(null);
+  const [toastMessage, setToastMessage] = useState<{
+    title: string;
+    type: "success" | "error" | "info";
+  } | null>(null);
 
   // Edit form state
   const [editTitle, setEditTitle] = useState("");
@@ -77,14 +80,18 @@ export function DashboardContent({
 
     if (success) {
       setToastMessage({
-        title: simulated ? "Simulated Upgrade Successful!" : "Upgrade Successful! Welcome to Pro.",
-        type: "success"
+        title: simulated
+          ? "Simulated Upgrade Successful!"
+          : "Upgrade Successful! Welcome to Pro.",
+        type: "success",
       });
       router.replace("/dashboard");
     } else if (canceled) {
       setToastMessage({
-        title: simulatedCancel ? "Simulated Cancellation Successful!" : "Checkout canceled.",
-        type: "info"
+        title: simulatedCancel
+          ? "Simulated Cancellation Successful!"
+          : "Checkout canceled.",
+        type: "info",
       });
       router.replace("/dashboard");
     }
@@ -109,20 +116,20 @@ export function DashboardContent({
     }
   };
 
-  const handleManageSubscription = async () => {
-    setIsManaging(true);
-    try {
-      const res = await createCustomerPortalSession();
-      if (res?.url) {
-        window.location.href = res.url;
-      }
-    } catch (e: any) {
-      console.error(e);
-      alert(e.message || "Failed to open customer portal.");
-    } finally {
-      setIsManaging(false);
-    }
-  };
+  // const handleManageSubscription = async () => {
+  //   setIsManaging(true);
+  //   try {
+  //     const res = await createCustomerPortalSession();
+  //     if (res?.url) {
+  //       window.location.href = res.url;
+  //     }
+  //   } catch (e: any) {
+  //     console.error(e);
+  //     alert(e.message || "Failed to open customer portal.");
+  //   } finally {
+  //     setIsManaging(false);
+  //   }
+  // };
 
   const openModal = (post: Post, type: "view" | "edit" | "delete") => {
     setSelectedPost(post);
@@ -180,13 +187,15 @@ export function DashboardContent({
   return (
     <>
       {toastMessage && (
-        <div className={`fixed top-24 right-4 z-50 px-6 py-4 rounded-xl shadow-2xl border font-bold text-sm backdrop-blur-md animate-in fade-in slide-in-from-top-4 duration-300 ${
-          toastMessage.type === 'success' 
-            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-            : toastMessage.type === 'error'
-            ? 'bg-rose-500/10 border-rose-500/20 text-rose-400'
-            : 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400'
-        }`}>
+        <div
+          className={`fixed top-24 right-4 z-50 px-6 py-4 rounded-xl shadow-2xl border font-bold text-sm backdrop-blur-md animate-in fade-in slide-in-from-top-4 duration-300 ${
+            toastMessage.type === "success"
+              ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+              : toastMessage.type === "error"
+                ? "bg-rose-500/10 border-rose-500/20 text-rose-400"
+                : "bg-indigo-500/10 border-indigo-500/20 text-indigo-400"
+          }`}
+        >
           {toastMessage.title}
         </div>
       )}
@@ -397,7 +406,7 @@ export function DashboardContent({
                 </button>
               ) : (
                 <button
-                  onClick={handleManageSubscription}
+                  onClick={handleUpgrade}
                   disabled={isManaging}
                   className="w-full mt-6 rounded-xl bg-white/5 border border-white/10 py-4 font-black text-white hover:bg-white/10 active:scale-[0.98] transition-all shadow-xl uppercase tracking-widest text-xs flex items-center justify-center gap-2"
                 >

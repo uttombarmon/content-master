@@ -102,3 +102,15 @@ export const seoAudit = pgTable("seo_audit", {
   suggestions: jsonb("suggestions").$type<string[]>(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const payment = pgTable("payment", {
+  id: text("id").primaryKey(), // stripe checkout session id or charge id
+  userId: text("userId")
+    .notNull()
+    .references(() => user.id),
+  stripeSessionId: text("stripe_session_id").notNull(),
+  amount: integer("amount").notNull(),
+  currency: varchar("currency", { length: 10 }).notNull(),
+  status: varchar("status", { length: 50 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
