@@ -29,8 +29,36 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Environment Variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+For the application to function locally or in production, ensure the following environment variables are set in your `.env` (or `.env.local`) file:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```env
+# Database
+DATABASE_URL="postgres://user:password@host:port/db"
+
+# Authentication (Better-Auth)
+BETTER_AUTH_SECRET="your_secret_here"
+BETTER_AUTH_URL="http://localhost:3000"
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+
+# AI Generation
+GEMINI_API_KEY="your_google_gemini_api_key"
+
+# Stripe (Optional for local dev, Required for production)
+STRIPE_SECRET_KEY="sk_test_..."
+STRIPE_WEBHOOK_SECRET="whsec_..."
+STRIPE_PRO_PRICE_ID="price_..."
+```
+
+> **Note:** If Stripe keys are omitted in development mode, the app will simulate a successful upgrade when clicking "Upgrade to Pro."
+
+## Deploy on Vercel or Render
+
+This application works perfectly out-of-the-box on Next.js hosting platforms like Vercel. 
+To deploy:
+1. Push your code to a GitHub repository.
+2. Link the repository to your Vercel/Render account.
+3. Supply **all** the production environment variables listed above in your hosting provider's dashboard.
+4. Set `BETTER_AUTH_URL` and `NEXT_PUBLIC_APP_URL` to your production domain (e.g., `https://your-domain.com`).
+5. Update your Stripe webhook endpoint in the Stripe Dashboard to point to `https://your-domain.com/api/webhooks/stripe`.

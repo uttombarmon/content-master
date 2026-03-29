@@ -19,7 +19,7 @@ import {
 import Link from "next/link";
 import { Modal } from "@/components/Modal";
 import { deletePostAction, updatePostAction } from "@/app/actions/dashboard";
-import { createCheckoutSession } from "@/app/actions/stripe";
+import { createCheckoutSession, createCustomerPortalSession } from "@/app/actions/stripe";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CreditIndicator } from "@/components/CreditIndicator";
 
@@ -62,15 +62,35 @@ export function DashboardContent({
   );
   const [isPending, setIsPending] = useState(false);
   const [isUpgrading, setIsUpgrading] = useState(false);
+  const [isManaging, setIsManaging] = useState(false);
+  const [toastMessage, setToastMessage] = useState<{title: string, type: 'success' | 'error' | 'info'} | null>(null);
 
   // Edit form state
   const [editTitle, setEditTitle] = useState("");
   const [editBody, setEditBody] = useState("");
 
   useEffect(() => {
-    if (searchParams.get("success")) {
-      // Clear params and show success
+    const success = searchParams.get("success");
+    const canceled = searchParams.get("canceled");
+    const simulated = searchParams.get("simulated");
+    const simulatedCancel = searchParams.get("simulated_cancel");
+
+    if (success) {
+      setToastMessage({
+        title: simulated ? "Simulated Upgrade Successful!" : "Upgrade Successful! Welcome to Pro.",
+        type: "success"
+      });
       router.replace("/dashboard");
+    } else if (canceled) {
+      setToastMessage({
+        title: simulatedCancel ? "Simulated Cancellation Successful!" : "Checkout canceled.",
+        type: "info"
+      });
+      router.replace("/dashboard");
+    }
+
+    if (success || canceled) {
+      setTimeout(() => setToastMessage(null), 5000);
     }
   }, [searchParams, router]);
 
@@ -78,17 +98,29 @@ export function DashboardContent({
     setIsUpgrading(true);
     try {
       const res = await createCheckoutSession();
-      console.log(res);
-      if (res.url) {
+      if (res?.url) {
         window.location.href = res.url;
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      alert(
-        "Failed to start checkout. Please ensure STRIPE_PRO_PRICE_ID is set.",
-      );
+      alert(e.message || "Failed to start checkout.");
     } finally {
       setIsUpgrading(false);
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    setIsManaging(true);
+    try {
+      const res = await createCustomerPortalSession();
+      if (res?.url) {
+        window.location.href = res.url;
+      }
+    } catch (e: any) {
+      console.error(e);
+      alert(e.message || "Failed to open customer portal.");
+    } finally {
+      setIsManaging(false);
     }
   };
 
@@ -147,6 +179,17 @@ export function DashboardContent({
 
   return (
     <>
+      {toastMessage && (
+        <div className={`fixed top-24 right-4 z-50 px-6 py-4 rounded-xl shadow-2xl border font-bold text-sm backdrop-blur-md animate-in fade-in slide-in-from-top-4 duration-300 ${
+          toastMessage.type === 'success' 
+            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+            : toastMessage.type === 'error'
+            ? 'bg-rose-500/10 border-rose-500/20 text-rose-400'
+            : 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400'
+        }`}>
+          {toastMessage.title}
+        </div>
+      )}
       <div className="grid gap-8 lg:grid-cols-12 mb-12">
         {/* Main Stats Area */}
         <div className="lg:col-span-8 space-y-8">
@@ -339,7 +382,7 @@ export function DashboardContent({
                     ))}
               </div>
 
-              {userData.plan === "free" && (
+              {userData.plan === "free" ? (
                 <button
                   onClick={handleUpgrade}
                   disabled={isUpgrading}
@@ -352,11 +395,20 @@ export function DashboardContent({
                   )}
                   {isUpgrading ? "Redirecting..." : "Upgrade to Pro — $29/mo"}
                 </button>
+              ) : (
+                <button
+                  onClick={handleManageSubscription}
+                  disabled={isManaging}
+                  className="w-full mt-6 rounded-xl bg-white/5 border border-white/10 py-4 font-black text-white hover:bg-white/10 active:scale-[0.98] transition-all shadow-xl uppercase tracking-widest text-xs flex items-center justify-center gap-2"
+                >
+                  {isManaging && <Loader2 className="h-4 w-4 animate-spin" />}
+                  Manage Subscription
+                </button>
               )}
               <p className="text-center text-[10px] text-slate-500 font-bold uppercase tracking-tighter">
                 {userData.plan === "free"
                   ? "Cancel anytime • Secure payment by Stripe"
-                  : "You are currently on the Pro Plan"}
+                  : "Manage billing via Stripe Customer Portal"}
               </p>
             </div>
           </div>
