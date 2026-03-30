@@ -28,22 +28,24 @@ export async function createCheckoutSession() {
     throw new Error("User not found");
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-
-  if (!stripe || !process.env.STRIPE_PRO_PRICE_ID) {
-    if (process.env.NODE_ENV !== "production") {
-      // Simulate upgrade in development mode
-      await db.update(user)
-        .set({ plan: "pro", credits: 100 })
-        .where(eq(user.id, session.user.id));
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
+//|| !process.env.STRIPE_PRO_PRICE_ID
+  if (!stripe ) {
+    // if (process.env.NODE_ENV !== "production") {
+    //   // Simulate upgrade in development mode
+    //   await db.update(user)
+    //     .set({ plan: "pro", credits: 100 })
+    //     .where(eq(user.id, session.user.id));
       
-      return { url: `${baseUrl}/dashboard?success=true&simulated=true` };
-    } else {
+    //   return { url: `${baseUrl}/dashboard?success=true&simulated=true` };
+    // } else {
       throw new Error("Stripe is not configured. Please add STRIPE_SECRET_KEY and STRIPE_PRO_PRICE_ID to your environment variables.");
-    }
+    // }
   }
 
   let stripeCustomerId = dbUser.stripeCustomerId;
+
+  // console.log("stripeCustomerId :",stripeCustomerId)
 
   // Create Stripe customer if it doesn't exist
   if (!stripeCustomerId) {
