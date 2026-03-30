@@ -91,13 +91,31 @@ export async function POST(req: Request) {
     const userId = subscription.metadata.userId;
 
     if (userId) {
+      // await db.update(user)
+      //   .set({
+      //     plan: "free",
+      //     credits: 10,
+      //     subscriptionStatus: "canceled",
+      //   })
+      //   .where(eq(user.id, userId));
+      if (subscription.cancel_at_period_end) {
+      // User just clicked "Cancel" - they have access until period end
       await db.update(user)
-        .set({
-          plan: "free",
-          credits: 10,
-          subscriptionStatus: "canceled",
+        .set({ subscriptionStatus: "cancelling" }) 
+        .where(eq(user.id,userId));
+
+      console.log(`User ${userId} is in 'cancelling' state.`);
+    } else {
+      // User clicked "Renew" or "Re-activate" before the period ended
+      await db.update(user)
+        .set({ 
+          subscriptionStatus: "active",
+          plan: "pro", 
+          credits: 100,
         })
-        .where(eq(user.id, userId));
+        .where(eq(user.id,userId));
+      console.log(`User ${userId} re-activated their subscription.`);
+    }
     }
   }
 

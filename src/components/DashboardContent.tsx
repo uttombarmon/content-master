@@ -19,7 +19,10 @@ import {
 import Link from "next/link";
 import { Modal } from "@/components/Modal";
 import { deletePostAction, updatePostAction } from "@/app/actions/dashboard";
-import { createCheckoutSession } from "@/app/actions/stripe";
+import {
+  createCheckoutSession,
+  createCustomerPortalSession,
+} from "@/app/actions/stripe";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CreditIndicator } from "@/components/CreditIndicator";
 
@@ -116,20 +119,20 @@ export function DashboardContent({
     }
   };
 
-  // const handleManageSubscription = async () => {
-  //   setIsManaging(true);
-  //   try {
-  //     const res = await createCustomerPortalSession();
-  //     if (res?.url) {
-  //       window.location.href = res.url;
-  //     }
-  //   } catch (e: any) {
-  //     console.error(e);
-  //     alert(e.message || "Failed to open customer portal.");
-  //   } finally {
-  //     setIsManaging(false);
-  //   }
-  // };
+  const handleManageSubscription = async () => {
+    setIsManaging(true);
+    try {
+      const res = await createCustomerPortalSession();
+      if (res?.url) {
+        window.location.href = res.url;
+      }
+    } catch (e: any) {
+      console.error(e);
+      alert(e.message || "Failed to open customer portal.");
+    } finally {
+      setIsManaging(false);
+    }
+  };
 
   const openModal = (post: Post, type: "view" | "edit" | "delete") => {
     setSelectedPost(post);
@@ -406,7 +409,7 @@ export function DashboardContent({
                 </button>
               ) : (
                 <button
-                  onClick={handleUpgrade}
+                  onClick={handleManageSubscription}
                   disabled={isManaging}
                   className="w-full mt-6 rounded-xl bg-white/5 border border-white/10 py-4 font-black text-white hover:bg-white/10 active:scale-[0.98] transition-all shadow-xl uppercase tracking-widest text-xs flex items-center justify-center gap-2"
                 >

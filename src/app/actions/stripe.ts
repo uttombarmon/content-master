@@ -85,46 +85,46 @@ export async function createCheckoutSession() {
 /**
  * Creates a Stripe Customer Portal Session for managing subscriptions.
  */
-// export async function createCustomerPortalSession() {
-//   const session = await auth.api.getSession({
-//     headers: await headers(),
-//   });
+export async function createCustomerPortalSession() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-//   if (!session?.user) {
-//     throw new Error("Unauthorized");
-//   }
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
 
-//   const dbUser = await db.query.user.findFirst({
-//     where: eq(user.id, session.user.id),
-//   });
+  const dbUser = await db.query.user.findFirst({
+    where: eq(user.id, session.user.id),
+  });
 
-//   if (!dbUser) {
-//     throw new Error("User not found");
-//   }
+  if (!dbUser) {
+    throw new Error("User not found");
+  }
 
-//   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-//   // Simulate portal down in dev mode if Stripe not configured
-//   if (!stripe) {
-//      if (process.env.NODE_ENV !== "production") {
-//         // Un-upgrade them for testing cancellation
-//         await db.update(user)
-//           .set({ plan: "free", credits: 10 })
-//           .where(eq(user.id, session.user.id));
-//         return { url: `${baseUrl}/dashboard?canceled=true&simulated_cancel=true` };
-//      } else {
-//         throw new Error("Stripe is not configured.");
-//      }
-//   }
+  // Simulate portal down in dev mode if Stripe not configured
+  if (!stripe) {
+    //  if (process.env.NODE_ENV !== "production") {
+        // Un-upgrade them for testing cancellation
+    //     await db.update(user)
+    //       .set({ plan: "free", credits: 10 })
+    //       .where(eq(user.id, session.user.id));
+    //     return { url: `${baseUrl}/dashboard?canceled=true&simulated_cancel=true` };
+    //  } else {
+        throw new Error("Stripe is not configured.");
+    //  }
+  }
 
-//   if (!dbUser.stripeCustomerId) {
-//     throw new Error("You don't have an active Stripe customer account.");
-//   }
+  if (!dbUser.stripeCustomerId) {
+    throw new Error("You don't have an active Stripe customer account.");
+  }
 
-//   const portalSession = await stripe.billingPortal.sessions.create({
-//     customer: dbUser.stripeCustomerId,
-//     return_url: `${baseUrl}/dashboard`,
-//   });
+  const portalSession = await stripe.billingPortal.sessions.create({
+    customer: dbUser.stripeCustomerId,
+    return_url: `${baseUrl}/dashboard`,
+  });
 
-//   return { url: portalSession.url };
-// }
+  return { url: portalSession.url };
+}
